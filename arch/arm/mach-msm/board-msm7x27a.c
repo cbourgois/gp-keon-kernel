@@ -777,6 +777,11 @@ static void msm_cfg_uart2dm_serial(void)
 static void msm_cfg_uart2dm_serial(void) { }
 #endif
 
+static struct platform_device gonzo_sysfs = {
+	.name = "gonzo-sysfs",
+	.id = -1,
+};
+
 static struct platform_device *rumi_sim_devices[] __initdata = {
 	&msm_device_dmov,
 	&msm_device_smd,
@@ -808,6 +813,7 @@ static struct platform_device *surf_ffa_devices[] __initdata = {
 	&msm_fb_device,
 	&msm_batt_device,
 	&smsc911x_device,
+	&gonzo_sysfs,
 #ifdef CONFIG_FB_MSM_MIPI_DSI
 	&mipi_dsi_ILI9487_panel_device,
 #endif
@@ -1135,8 +1141,10 @@ static struct i2c_board_info ktf2k_device[] = {
 };
 #endif 
 
-// Cellon modify end, Zepeng Wu, 2013/2/17, for TP
+// Disable keys for gonzo -- use as GPIO instead.
+#if 0
 
+// Cellon modify end, Zepeng Wu, 2013/2/17, for TP
 #define KP_INDEX(row, col) ((row)*ARRAY_SIZE(kp_col_gpios) + (col))
 
 static unsigned int kp_row_gpios[] = {31, 32};//cellon,zhihua 2013-1-3, 33, 34, 35};
@@ -1179,6 +1187,7 @@ static struct platform_device kp_pdev = {
 		.platform_data	= &kp_pdata,
 	},
 };
+#endif
 
 static struct msm_handset_platform_data hs_platform_data = {
 	.hs_name = "7k_handset",
@@ -1342,7 +1351,10 @@ static void __init msm7x2x_init(void)
 #if defined(CONFIG_MSM_CAMERA)
 	msm7627a_camera_init();
 #endif
-	platform_device_register(&kp_pdev);
+
+//	Use GPIOs as output instead
+//	platform_device_register(&kp_pdev);
+
 	platform_device_register(&hs_pdev);
 
 	/* configure it as a pdm function*/
